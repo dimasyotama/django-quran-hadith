@@ -1,0 +1,110 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ book.name|default:"Daftar Hadith" }} - Koleksi Hadith{% endblock %}
+
+{% block head_extra %}
+<style>
+.font-quran { /* Re-using for Arabic Hadith text */
+    font-family: 'Noto Naskh Arabic', 'Amiri Quran', 'KFGQPC Uthman Taha Naskh', serif;
+    line-height: 2.1; 
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 sm:px-6 py-6 md:py-8">
+    <div class="mb-8 text-center">
+        <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white">
+            {{ book.name|default:"Hadith Collection" }}
+        </h1>
+        {% if book.available %}
+        <p class="text-md text-gray-600 dark:text-gray-400 mt-1">
+            Total Hadith: {{ book.available }}
+        </p>
+        {% endif %}
+        {% if hadiths %}
+        <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">
+            <em>Menampilkan sebagian hadith. Paginasi akan dibutuhkan untuk semua.</em>
+        </p>
+        {% endif %}
+    </div>
+
+    <hr class="my-6 border-gray-200 dark:border-gray-700/60">
+
+    <form method="get" action="{% url 'hadith_list' book.id %}" class="mb-8 md:mb-10 max-w-xl mx-auto">
+        <div class="flex rounded-lg shadow-sm border border-gray-300 dark:border-gray-600">
+            <input type="text" name="q_hadith_text" placeholder="Cari dalam hadith ini..." value="{{ query|default:'' }}"
+                   class="flex-1 block w-full px-4 py-3 text-sm text-gray-700 bg-white dark:bg-gray-800 dark:text-gray-300 rounded-l-lg focus:ring-teal-500 focus:border-teal-500 dark:focus:ring-teal-400 dark:focus:border-teal-400 outline-none placeholder-gray-400 dark:placeholder-gray-500">
+            <button type="submit"
+                    class="px-5 py-3 text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 dark:focus:ring-offset-gray-900 transition-colors">
+                Cari
+            </button>
+        </div>
+    </form>
+
+    {% if api_error %}
+         <div class="mb-6 bg-red-100 dark:bg-red-900/30 border-l-4 border-red-500 dark:border-red-700 text-red-700 dark:text-red-300 px-4 py-3 rounded-md text-center" role="alert">
+            <p>{{ api_error }}</p>
+        </div>
+    {% endif %}
+
+    {% if hadiths %}
+        <div class="space-y-5 max-w-3xl mx-auto">
+            {% for hadith_item in hadiths %}
+            <article class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700/80 overflow-hidden group">
+                {# Hadith Number and Actions - Integrated Header within the card #}
+                <div class="p-4 sm:p-5 border-b border-gray-100 dark:border-gray-700/50 flex justify-between items-center">
+                    <span class="text-sm font-semibold px-3 py-1.5 bg-teal-100 text-teal-700 dark:bg-teal-700/30 dark:text-teal-300 rounded-full">
+                        Hadith No. {{ hadith_item.number }}
+                    </span>
+                    <div class="flex space-x-1 rtl:space-x-reverse">
+                        <button title="Bookmark Hadith" class="text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-300 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 3a1 1 0 011-1h6a1 1 0 011 1v12l-3.5-2L12 15.414V3H7a1 1 0 00-1 1v12l-3.5-2L6 15.414V3z" clip-rule="evenodd" /></svg>
+                        </button>
+                        <button title="Share Hadith" class="text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-300 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z" /><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.022 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" /></svg>
+                        </button>
+                    </div>
+                </div>
+
+                {# Hadith Content #}
+                <div class="p-4 sm:p-5 space-y-4">
+                    {% if hadith_item.arab %}
+                    <div>
+                        <p class="font-quran text-xl sm:text-2xl text-right text-gray-900 dark:text-white leading-relaxed" dir="rtl">
+                            {{ hadith_item.arab }}
+                        </p>
+                    </div>
+                    {% endif %}
+                    {% if hadith_item.id %} {# 'id' field contains Indonesian translation #}
+                    <div>
+                        <p class="text-gray-700 dark:text-gray-300 leading-relaxed text-sm">
+                            <strong class="font-medium text-gray-800 dark:text-gray-100">Artinya (ID):</strong> {{ hadith_item.id }}
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    {% elif not api_error %}
+        <div class="text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500"  xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0A2.25 2.25 0 013.75 7.5h16.5a2.25 2.25 0 012.25 2.276m0 0v1.148c0 .661-.536 1.2-1.2 1.2H2.4c-.661 0-1.2-.539-1.2-1.2V11.052M12 15.75A2.25 2.25 0 1012 11.25a2.25 2.25 0 000 4.5z" /></svg>
+            <h3 class="mt-2 text-base font-medium text-gray-800 dark:text-white">Tidak ada Hadith ditemukan</h3>
+            {% if query %}
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Tidak ada hasil untuk "{{ query }}" dalam kitab ini.</p>
+            {% else %}
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Hadith untuk kitab ini tidak dapat dimuat.</p>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <div class="mt-10 text-center">
+        <a href="{% url 'hadith_home' %}"
+           class="inline-flex items-center px-5 py-2.5 text-sm font-medium text-teal-700 dark:text-teal-300 bg-teal-100 hover:bg-teal-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 dark:focus:ring-offset-gray-900 transition-colors">
+            <svg class="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+            Kembali ke Koleksi Kitab
+        </a>
+    </div>
+</div>
+{% endblock %}

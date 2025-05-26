@@ -1,0 +1,22 @@
+/* core/static/core/css/tailwind-input.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply font-sans antialiased text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-900 transition-colors duration-300;
+  }
+  .font-quran { /* Or .font-arabic if you prefer */
+    font-family: 'Noto Naskh Arabic', 'Amiri Quran', 'KFGQPC Uthman Taha Naskh', 'Lateef', serif; /* Ensure fonts are loaded */
+    line-height: 2.2; /* Generous line height for Arabic */
+  }
+  /* Optional: Basic scrollbar styling */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; } /* Or bg-gray-100 dark:bg-gray-800 */
+  ::-webkit-scrollbar-thumb { background-color: rgba(0, 0, 0, 0.2); border-radius: 10px; border: 2px solid transparent; background-clip: content-box; }
+  html.dark ::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.2); }
+}

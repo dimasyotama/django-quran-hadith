@@ -1,0 +1,127 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id" class=""> {# JS will toggle 'dark' class here #}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Islamic App{% endblock %} - Qur'an and hadith</title> {# Renamed for a fresh feel #}
+    <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+    {# Favicon links #}
+    <link rel="icon" href="{% static 'core/images/favicon.ico' %}" sizes="any"> {# Assuming you add a favicon #}
+    <link rel="apple-touch-icon" href="{% static 'core/images/apple-touch-icon.png' %}">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)">
+    {% block head_extra %}{% endblock %}
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50 transition-colors duration-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="{% url 'home' %}" class="flex-shrink-0 flex items-center space-x-2 rtl:space-x-reverse">
+                        {# Replace with your actual SVG logo #}
+                        <svg class="h-8 w-auto text-green-600 dark:text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 M3 10.5v.75A2.25 2.25 0 005.25 13.5h13.5A2.25 2.25 0 0021 11.25v-.75m-18 0A2.25 2.25 0 005.25 9h13.5A2.25 2.25 0 0021 11.25v0M17.25 12a2.25 2.25 0 002.25-2.25v-.75" />
+                        </svg>
+                        <span class="text-xl font-semibold text-gray-800 dark:text-white">Qur'an and hadith</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex md:items-center md:space-x-2 rtl:space-x-reverse">
+                    <a href="{% url 'home' %}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-green-600 dark:hover:text-green-400 transition-colors">Home</a>
+                    <a href="{% url 'quran_home' %}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-green-600 dark:hover:text-green-400 transition-colors">Al-Qur'an</a>
+                    <a href="{% url 'hadith_home' %}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-green-600 dark:hover:text-green-400 transition-colors">Hadith</a>
+                </div>
+                <div class="flex items-center">
+                    <button id="darkModeToggle" aria-label="Toggle Dark Mode" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-green-600 dark:hover:text-green-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-800 focus:ring-green-500 transition-colors">
+                        <svg id="icon-sun" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-.707 12.728a1 1 0 010-1.414l.707-.707a1 1 0 111.414 1.414l-.707.707a1 1 0 01-1.414 0zM17 15a1 1 0 100 2h-1a1 1 0 100-2h1zm-4-8a1 1 0 011-1h1a1 1 0 110 2h-1a1 1 0 01-1-1zM3 11a1 1 0 100 2h1a1 1 0 100-2H3z" clip-rule="evenodd"></path></svg>
+                        <svg id="icon-moon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    </button>
+                    <div class="md:hidden ml-2 rtl:mr-2">
+                        <button id="mobileMenuButton" type="button" class="p-2 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-green-500" aria-controls="mobile-menu-flyout" aria-expanded="false">
+                            <span class="sr-only">Open main menu</span>
+                            <svg class="block h-6 w-6" id="icon-menu-burger" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
+                            <svg class="hidden h-6 w-6" id="icon-menu-close" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="md:hidden hidden" id="mobile-menu-flyout">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white dark:bg-gray-800 shadow-lg">
+                <a href="{% url 'home' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-green-600 dark:hover:text-green-400 transition-colors">Home</a>
+                <a href="{% url 'quran_home' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-green-600 dark:hover:text-green-400 transition-colors">Al-Qur'an</a>
+                <a href="{% url 'hadith_home' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-green-600 dark:hover:text-green-400 transition-colors">Hadith</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow py-6 sm:py-8">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="bg-gray-200 dark:bg-gray-800 border-t border-gray-300 dark:border-gray-700/50 transition-colors duration-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-xs text-gray-600 dark:text-gray-400">
+            <p>&copy; {% now "Y" %} Qur'an and hadith. A journey of faith and knowledge.</p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {# Consider moving this JS to core/static/core/js/main.js #}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const iconSun = document.getElementById('icon-sun');
+            const iconMoon = document.getElementById('icon-moon');
+            const htmlEl = document.documentElement;
+
+            const mobileMenuButton = document.getElementById('mobileMenuButton');
+            const mobileMenuFlyout = document.getElementById('mobile-menu-flyout');
+            const iconMenuBurger = document.getElementById('icon-menu-burger');
+            const iconMenuClose = document.getElementById('icon-menu-close');
+
+            function setTheme(theme) {
+                if (theme === 'dark') {
+                    htmlEl.classList.add('dark');
+                    if(iconSun) iconSun.style.display = 'none';
+                    if(iconMoon) iconMoon.style.display = 'block';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    htmlEl.classList.remove('dark');
+                    if(iconSun) iconSun.style.display = 'block';
+                    if(iconMoon) iconMoon.style.display = 'none';
+                    localStorage.setItem('theme', 'light');
+                }
+            }
+
+            const storedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (storedTheme) {
+                setTheme(storedTheme);
+            } else {
+                setTheme(systemPrefersDark ? 'dark' : 'light');
+            }
+
+            if(darkModeToggle) {
+                darkModeToggle.addEventListener('click', () => {
+                    const currentTheme = htmlEl.classList.contains('dark') ? 'dark' : 'light';
+                    setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+                });
+            }
+
+            if(mobileMenuButton && mobileMenuFlyout && iconMenuBurger && iconMenuClose) {
+                mobileMenuButton.addEventListener('click', () => {
+                    const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+                    mobileMenuButton.setAttribute('aria-expanded', String(!isExpanded));
+                    mobileMenuFlyout.classList.toggle('hidden');
+                    iconMenuBurger.classList.toggle('hidden');
+                    iconMenuClose.classList.toggle('hidden');
+                });
+            }
+        });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

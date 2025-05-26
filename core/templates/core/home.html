@@ -1,0 +1,252 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Welcome - MyGuidance{% endblock %}
+
+{% block head_extra %}
+<style>
+/* Styles for highlighting the next prayer (keep from previous) */
+.next-prayer-highlight {
+    @apply bg-green-500 dark:bg-green-600 shadow-lg scale-105 ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-800 ring-green-400 dark:ring-green-500;
+}
+.next-prayer-highlight .prayer-name-subtle, 
+.next-prayer-highlight .prayer-time-value {
+   @apply text-white font-semibold;
+}
+.font-quran {
+    font-family: 'Noto Naskh Arabic', 'Amiri Quran', 'KFGQPC Uthman Taha Naskh', serif;
+    line-height: 1.8;
+}
+
+/* Styles for the Hijri Calendar Modal */
+.modal-overlay {
+    @apply fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 ease-in-out;
+}
+.modal-content {
+    @apply bg-white dark:bg-gray-800 rounded-lg shadow-xl transform transition-all duration-300 ease-in-out max-w-md w-full p-6;
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
+
+    {# Welcome Header, Current Time, Hijri Button #}
+    <section class="text-center mb-8 md:mb-10">
+        <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white mb-2">
+            Assalamu'alaikum!
+        </h1>
+        <p id="currentTimeDisplay" class="text-xl text-green-600 dark:text-green-400 font-medium">
+            Loading current time...
+        </p>
+        <div class="flex items-center justify-center space-x-3 rtl:space-x-reverse mt-2">
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+                {{ prayer_date_readable|default:"Today" }}
+            </p>
+            {% if hijri_date_details %}
+            <button id="showHijriCalendarBtn" class="text-sm text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 font-medium underline focus:outline-none flex items-center space-x-1 rtl:space-x-reverse">
+                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2zm-1 5.5c0-.138.112-.25.25-.25h10.5a.25.25 0 01.25.25v6.5a.25.25 0 01-.25.25H4.75a.25.25 0 01-.25-.25v-6.5zm.75 1.5a.75.75 0 000 1.5h1.5a.75.75 0 000-1.5H5.5zm3 0a.75.75 0 000 1.5h1.5a.75.75 0 000-1.5H8.5zm3 0a.75.75 0 000 1.5h1.5a.75.75 0 000-1.5h-1.5z" clip-rule="evenodd" />
+                </svg>
+                <span>{{ hijri_date_details.day }} {{ hijri_date_details.month_en }} {{ hijri_date_details.year }} {{ hijri_date_details.designation }}</span>
+            </button>
+            {% elif prayer_hijri_date_readable %}
+             <p class="text-sm text-gray-500 dark:text-gray-400">| {{ prayer_hijri_date_readable }}</p>
+            {% endif %}
+        </div>
+    </section>
+
+    {# Prayer Times and Countdown Card (Same as before) #}
+    <section class="mb-8 md:mb-12 bg-white dark:bg-gray-800 p-5 sm:p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
+        {# ... (prayer times display code from previous response) ... #}
+         <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-3 text-center">
+            <svg class="inline w-6 h-6 mr-2 rtl:ml-2 rtl:mr-0 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            Jadwal Sholat 
+            <span class="block text-xs font-normal text-gray-500 dark:text-gray-400">({{ settings.PRAYER_TIMES_CITY }})</span>
+        </h2>
+        {% if prayer_times %}
+            <div id="nextPrayerCountdown" class="text-center my-5 p-4 bg-green-50 dark:bg-green-800/40 rounded-lg shadow-inner">
+                <p class="text-sm text-gray-700 dark:text-gray-300">Menuju Sholat Berikutnya:</p>
+                <p class="text-2xl font-bold text-green-600 dark:text-green-400" id="nextPrayerName">Loading...</p>
+                <p class="text-4xl font-mono text-gray-800 dark:text-white tracking-tight" id="countdownTimer">--:--:--</p>
+            </div>
+            <div class="mt-5">
+                <div class="flex flex-wrap justify-center gap-3 sm:gap-4">
+                    {% for name, time in prayer_times.items %}
+                    {% if name != "Imsak" and name != "Terbit" %}
+                    <div id="prayer-{{ name|slugify }}" class="w-32 sm:w-36 bg-gray-100 dark:bg-gray-700 p-3 rounded-lg text-center shadow-md hover:shadow-lg transition-all duration-300 cursor-default">
+                        <div class="text-xs text-gray-500 dark:text-gray-400 prayer-name-subtle">{{ name }}</div>
+                        <div class="text-lg font-semibold text-gray-800 dark:text-gray-200 prayer-time-value mt-0.5">{{ time }}</div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% elif prayer_times_error %} <p class="text-center text-red-500 dark:text-red-400 py-8">{{ prayer_times_error }}</p>
+        {% else %} <p class="text-center text-gray-500 dark:text-gray-400 py-8">Memuat jadwal sholat...</p>
+        {% endif %}
+    </section>
+
+    {# Main Feature Cards (Same as before) #}
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+        {# ... (Al-Qur'an and Hadith cards from previous response) ... #}
+        <a href="{% url 'quran_home' %}" class="block group bg-gradient-to-br from-green-500 to-teal-600 dark:from-green-600 dark:to-teal-700 p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+            <div class="flex items-center space-x-4 rtl:space-x-reverse">
+                <div class="bg-white/20 p-3 rounded-lg"><svg class="w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg></div>
+                <div><h2 class="text-xl font-semibold text-white">Al-Qur'an Al-Karim</h2><p class="text-sm text-green-100 opacity-90">Baca dan pahami firman Allah.</p></div>
+            </div>
+        </a>
+        <a href="{% url 'hadith_home' %}" class="block group bg-gradient-to-br from-teal-500 to-cyan-600 dark:from-teal-600 dark:to-cyan-700 p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+            <div class="flex items-center space-x-4 rtl:space-x-reverse">
+                <div class="bg-white/20 p-3 rounded-lg"><svg class="w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18V7.875c0-.621.504-1.125 1.125-1.125H6.75m3-4.125V5.625m0 0A2.25 2.25 0 0112 8.25m0 0H6.75m5.25 0H18m2.25-4.125c0 .621.504 1.125 1.125 1.125H21V5.625c0-1.036-.84-1.875-1.875-1.875H18m2.25 0V3.75m0 0h-1.5m1.5 0c0-.621-.504-1.125-1.125-1.125H6.75c-1.035 0-1.875.84-1.875 1.875v10.5c0 1.035.84 1.875 1.875 1.875h10.5c1.035 0 1.875-.84 1.875-1.875V9.75" /></svg></div>
+                <div><h2 class="text-xl font-semibold text-white">Kumpulan Hadith</h2><p class="text-sm text-teal-100 opacity-90">Teladani sunnah Rasulullah SAW.</p></div>
+            </div>
+        </a>
+    </section>
+</div>
+
+{# Hijri Calendar Modal Structure (Initially Hidden) #}
+<div id="hijriCalendarModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden modal-overlay">
+    <div class="modal-content">
+        <div class="flex justify-between items-center pb-3 border-b dark:border-gray-700">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Kalender Hijriah Hari Ini</h3>
+            <button id="closeHijriModalBtn" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+        <div class="mt-4 space-y-2 text-center">
+            {% if hijri_date_details %}
+                <p class="text-3xl font-semibold text-green-600 dark:text-green-400">{{ hijri_date_details.day }}</p>
+                <p class="text-xl text-gray-800 dark:text-white font-quran" dir="rtl">{{ hijri_date_details.month_ar }}</p>
+                <p class="text-md text-gray-700 dark:text-gray-300">{{ hijri_date_details.month_en }}</p>
+                <p class="text-2xl font-semibold text-green-600 dark:text-green-400">{{ hijri_date_details.year }} <span class="text-sm">{{ hijri_date_details.designation }}</span></p>
+                {% if hijri_date_details.holidays %}
+                    <div class="mt-3 pt-3 border-t dark:border-gray-700">
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Hari Penting:</p>
+                        {% for holiday in hijri_date_details.holidays %}
+                            <p class="text-sm text-green-600 dark:text-green-400">{{ holiday }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% else %}
+                <p class="text-gray-500 dark:text-gray-400">Informasi tanggal Hijriah tidak tersedia.</p>
+            {% endif %}
+            <p class="text-xs text-gray-400 dark:text-gray-500 mt-4">
+                Untuk kalender bulanan lengkap, silakan merujuk pada aplikasi kalender Hijriah terdedikasi.
+            </p>
+        </div>
+    </div>
+</div>
+
+
+{# Pass prayer times to JavaScript (keep from previous) #}
+<script id="prayerTimesData" type="application/json">
+    {{ prayer_times_json|safe }}
+</script>
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // --- Current Time, Prayer Times Countdown, and Highlighting JS (Keep from previous) ---
+    const currentTimeDisplay = document.getElementById('currentTimeDisplay');
+    const nextPrayerNameDisplay = document.getElementById('nextPrayerName');
+    const countdownTimerDisplay = document.getElementById('countdownTimer');
+    let prayerTimes = {};
+    const prayerSchedule = ["Subuh", "Dzuhur", "Ashar", "Maghrib", "Isya"];
+
+    try {
+        const prayerDataScript = document.getElementById('prayerTimesData');
+        if (prayerDataScript) { prayerTimes = JSON.parse(prayerDataScript.textContent || '{}');}
+    } catch (e) { console.error("Error parsing prayer times JSON:", e); if(nextPrayerNameDisplay) nextPrayerNameDisplay.textContent = "Error data jadwal"; }
+
+    function formatTime(date) { /* ... (keep this function) ... */ 
+        let hours = date.getHours(); let minutes = date.getMinutes(); let seconds = date.getSeconds();
+        hours = hours < 10 ? '0' + hours : hours; minutes = minutes < 10 ? '0' + minutes : minutes; seconds = seconds < 10 ? '0' + seconds : seconds;
+        return hours + ':' + minutes + ':' + seconds;
+    }
+    function updateCurrentTime() { if (currentTimeDisplay) { currentTimeDisplay.textContent = formatTime(new Date()); } }
+    function getNextPrayerInfo() { /* ... (keep this function) ... */
+        const now = new Date(); const currentTimeInSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+        let nextPrayerName = null; let nextPrayerTimeObj = null; let minDiffSeconds = Infinity;
+        const todayBase = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        for (const prayer of prayerSchedule) {
+            const timeStr = prayerTimes[prayer]; if (!timeStr) continue;
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            const prayerDateToday = new Date(todayBase.getFullYear(), todayBase.getMonth(), todayBase.getDate(), hours, minutes, 0);
+            const prayerTimeInSecondsToday = hours * 3600 + minutes * 60;
+            if (prayerTimeInSecondsToday > currentTimeInSeconds) {
+                const diff = prayerTimeInSecondsToday - currentTimeInSeconds;
+                if (diff < minDiffSeconds) { minDiffSeconds = diff; nextPrayerName = prayer; nextPrayerTimeObj = prayerDateToday;}
+            }
+        }
+        if (!nextPrayerName && prayerTimes["Subuh"]) {
+            nextPrayerName = "Subuh"; const [fajrHours, fajrMinutes] = prayerTimes["Subuh"].split(':').map(Number);
+            const tomorrowFajrDate = new Date(todayBase); tomorrowFajrDate.setDate(tomorrowFajrDate.getDate() + 1); tomorrowFajrDate.setHours(fajrHours, fajrMinutes, 0, 0);
+            nextPrayerTimeObj = tomorrowFajrDate;
+        }
+        return { name: nextPrayerName, timeObj: nextPrayerTimeObj };
+    }
+    function updateCountdown() { /* ... (keep this function, including highlight logic) ... */
+        if (!nextPrayerNameDisplay || !countdownTimerDisplay || Object.keys(prayerTimes).length === 0) {
+            if(nextPrayerNameDisplay) nextPrayerNameDisplay.textContent = "Jadwal tidak tersedia";
+            if(countdownTimerDisplay) countdownTimerDisplay.textContent = "--:--:--"; return;
+        }
+        const { name, timeObj } = getNextPrayerInfo();
+        document.querySelectorAll('[id^="prayer-"]').forEach(el => {
+            el.classList.remove('next-prayer-highlight', 'bg-green-500', 'dark:bg-green-600', 'shadow-lg', 'scale-105');
+            el.classList.add('bg-gray-100', 'dark:bg-gray-700/60');
+            const nameSubtle = el.querySelector('.prayer-name-subtle'); const timeValue = el.querySelector('.prayer-time-value');
+            if(nameSubtle) nameSubtle.classList.remove('text-green-100', 'dark:text-green-200');
+            if(timeValue) timeValue.classList.remove('text-white', 'font-semibold');
+        });
+        if (name && timeObj) {
+            nextPrayerNameDisplay.textContent = name;
+            const highlightElId = `prayer-${name.toLowerCase().replace(/\s+/g, '-')}`;
+            const highlightEl = document.getElementById(highlightElId);
+            if(highlightEl) { highlightEl.classList.add('next-prayer-highlight'); highlightEl.classList.remove('bg-gray-100', 'dark:bg-gray-700/60');}
+            const now = new Date(); const diff = timeObj - now;
+            if (diff > 0) {
+                const h = Math.floor(diff/(1000*60*60)); const m = Math.floor((diff/1000/60)%60); const s = Math.floor((diff/1000)%60);
+                countdownTimerDisplay.textContent = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            } else { countdownTimerDisplay.textContent = "Waktu Telah Masuk"; }
+        } else { nextPrayerNameDisplay.textContent = "Semua sholat selesai"; countdownTimerDisplay.textContent = "Menunggu besok"; }
+    }
+    updateCurrentTime(); 
+    if (Object.keys(prayerTimes).length > 0) { updateCountdown(); setInterval(() => { updateCurrentTime(); updateCountdown(); }, 1000); } 
+    else { if(nextPrayerNameDisplay) nextPrayerNameDisplay.textContent = settings.PRAYER_TIMES_CITY ? "Memuat jadwal..." : "Lokasi belum diatur"; if(countdownTimerDisplay) countdownTimerDisplay.textContent = "--:--:--"; }
+
+    // --- NEW: Hijri Calendar Modal JavaScript ---
+    const showHijriBtn = document.getElementById('showHijriCalendarBtn');
+    const hijriModal = document.getElementById('hijriCalendarModal');
+    const closeHijriModalBtn = document.getElementById('closeHijriModalBtn');
+
+    if (showHijriBtn && hijriModal) {
+        showHijriBtn.addEventListener('click', function() {
+            hijriModal.classList.remove('hidden');
+            // Add class to body to prevent scrolling when modal is open (optional)
+            document.body.classList.add('overflow-hidden');
+        });
+    }
+
+    if (closeHijriModalBtn && hijriModal) {
+        closeHijriModalBtn.addEventListener('click', function() {
+            hijriModal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        });
+    }
+
+    // Optional: Close modal if clicking on the overlay
+    if (hijriModal) {
+        hijriModal.addEventListener('click', function(event) {
+            if (event.target === hijriModal) { // Check if click is on the overlay itself
+                hijriModal.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

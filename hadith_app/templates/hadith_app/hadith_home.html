@@ -1,0 +1,70 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Koleksi Kitab Hadith{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 sm:px-6 py-6 md:py-8">
+    <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white mb-8 text-center">
+        Koleksi Kitab Hadith
+    </h1>
+
+    <form method="get" action="{% url 'hadith_home' %}" class="mb-8 md:mb-10 max-w-xl mx-auto">
+        <div class="flex rounded-lg shadow-sm border border-gray-300 dark:border-gray-600">
+            <input type="text" name="q_hadith_book" placeholder="Cari Kitab Hadith..." value="{{ query|default:'' }}"
+                   class="flex-1 block w-full px-4 py-3 text-sm text-gray-700 bg-white dark:bg-gray-800 dark:text-gray-300 rounded-l-lg focus:ring-teal-500 focus:border-teal-500 dark:focus:ring-teal-400 dark:focus:border-teal-400 outline-none placeholder-gray-400 dark:placeholder-gray-500">
+            <button type="submit"
+                    class="px-5 py-3 text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 dark:focus:ring-offset-gray-900 transition-colors">
+                Cari
+            </button>
+        </div>
+    </form>
+
+    {% if api_error %}
+        <div class="mb-6 bg-red-100 dark:bg-red-900/30 border-l-4 border-red-500 dark:border-red-700 text-red-700 dark:text-red-300 px-4 py-3 rounded-md text-center" role="alert">
+            <p>{{ api_error }}</p>
+        </div>
+    {% endif %}
+
+    {% if books %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+            {% for book_item in books %}
+            <a href="{% url 'hadith_list' book_item.id %}" class="block group">
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out border border-gray-200 dark:border-gray-700 group-hover:border-teal-500 dark:group-hover:border-teal-400 transform group-hover:-translate-y-1 group-hover:scale-[1.02]">
+                    <div class="flex flex-col justify-between h-full">
+                        <div>
+                             <div class="mb-3">
+                                <span class="inline-flex items-center justify-center w-10 h-10 text-sm font-semibold text-teal-700 dark:text-teal-300 bg-teal-100 dark:bg-gray-700 rounded-lg">
+                                    {# Conceptual Icon for Book - Replace with actual SVG #}
+                                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+                                </span>
+                            </div>
+                            <h3 class="text-md font-semibold text-gray-800 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 mb-1">
+                                {{ book_item.name }}
+                            </h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                Imam {{ book_item.id|capfirst }} {# Assuming book_item.id is the slug like 'bukhari' #}
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700/50 text-right rtl:text-left">
+                             <span class="px-3 py-1 text-xs font-medium text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-gray-700/50 rounded-full">
+                                {{ book_item.available }} Hadiths
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    {% elif not api_error %}
+        <div class="text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-800 dark:text-white">Tidak ada Kitab Hadith ditemukan</h3>
+             {% if query %}
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Tidak ada hasil untuk "{{ query }}".</p>
+            {% else %}
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Daftar Kitab Hadith tidak dapat dimuat.</p>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

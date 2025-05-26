@@ -1,0 +1,250 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ surah.nama_latin|default:"Detail Surat" }} - Al-Qur'an{% endblock %}
+
+{% block head_extra %}
+<style>
+.prose-quran-description img { display: none; }
+.prose-quran-description i { font-style: normal; }
+.prose-quran-description p { @apply mb-2 text-sm leading-relaxed; }
+
+.tafsir-content h1, .tafsir-content h2, .tafsir-content h3,
+.tafsir-content h4, .tafsir-content h5, .tafsir-content h6 {
+    @apply text-base font-semibold mt-3 mb-1 dark:text-gray-100;
+}
+.tafsir-content p {
+    @apply mb-3 text-sm leading-relaxed dark:text-gray-300;
+}
+.tafsir-content blockquote {
+    @apply border-l-4 border-gray-300 dark:border-gray-600 pl-3 italic my-3 text-gray-600 dark:text-gray-400 text-sm;
+}
+.tafsir-content ul, .tafsir-content ol {
+    @apply list-inside list-disc pl-3 mb-3 text-sm dark:text-gray-300;
+}
+.tafsir-content li > p {
+    @apply inline;
+}
+
+details > summary { list-style-type: none; }
+details > summary::-webkit-details-marker { display: none; }
+details > summary::marker { display: none; }
+
+.font-quran {
+    font-family: 'Noto Naskh Arabic', 'Amiri Quran', 'KFGQPC Uthman Taha Naskh', serif;
+    line-height: 2.3; /* Generous line height for Arabic */
+}
+
+/* Custom Select Arrow CSS */
+.custom-select {
+    @apply appearance-none bg-no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1.2em 1.2em;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236b7280'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd' /%3E%3C/svg%3E");
+}
+.dark .custom-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%239ca3af'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd' /%3E%3C/svg%3E");
+}
+.dark .custom-select option {
+    @apply bg-gray-700 text-gray-200;
+}
+</style>
+{% endblock head_extra %}
+
+
+{% block content %}
+<div class="container mx-auto px-4 sm:px-6 py-6 md:py-8">
+    <div class="max-w-3xl mx-auto">
+
+        {# Surah Header Card - Green Theme, with "Surat X - Latin Name" title #}
+        <section class="mb-8 md:mb-10 bg-gradient-to-br from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white rounded-xl shadow-2xl p-6 sm:p-8">
+            {% if surah.nama_latin and surah.nama_latin != 'N/A' %} {# Using nama_latin from view context #}
+                <div class="text-center mb-3">
+                    <h1 class="text-3xl sm:text-4xl font-bold items-center justify-center">
+                        Surat {{ surah.nomor }} - {{ surah.nama_latin }}
+                    </h1>
+                    <h2 class="font-quran text-4xl sm:text-5xl mt-2" dir="rtl">
+                        {{ surah.nama_arabic }}
+                    </h2>
+                    <p class="text-lg opacity-90 mt-1">
+                        ({{ surah.arti }})
+                    </p>
+                </div>
+                <div class="mt-4 text-sm opacity-90 flex flex-wrap gap-x-4 gap-y-1 items-center justify-center border-t border-white/20 pt-4">
+                    <span>{{ surah.jumlah_ayat }} Ayat</span>
+                    <span>&bull;</span>
+                     <span class="px-2 py-0.5 capitalize text-xs font-medium text-green-100 bg-white/20 rounded-full">{{ surah.tempat_turun }}</span>
+                </div>
+
+                {% if surah.deskripsi %}
+                <details class="mt-5 group text-sm">
+                    <summary class="cursor-pointer font-medium opacity-80 hover:opacity-100 list-none flex items-center justify-center py-1">
+                        <span class="group-open:hidden inline-flex items-center">Deskripsi Surat <svg class="w-4 h-4 ml-1 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></span>
+                        <span class="hidden group-open:inline-flex items-center">Sembunyikan Deskripsi <svg class="w-4 h-4 ml-1 opacity-70 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></span>
+                    </summary>
+                    <div class="mt-2 prose prose-sm max-w-none leading-relaxed prose-quran-description !text-green-50 opacity-90 bg-black/10 dark:bg-black/20 p-4 rounded-lg border border-white/20">
+                        {{ surah.deskripsi }}
+                    </div>
+                </details>
+                {% endif %} {# Closes if surah.deskripsi #}
+
+                {% if surah.audio_default or surah.audio_full_options_formatted %}
+                <div class="mt-5 pt-4 border-t border-white/20">
+                     <p class="text-xs opacity-80 mb-1 text-center">Audio Surat:</p>
+                    <audio id="surahAudioPlayerMain" controls controlsList="nodownload" class="w-full rounded-md h-10 mb-2">
+                        {% if surah.audio_default %} <source src="{{ surah.audio_default }}" type="audio/mpeg">
+                        {% elif surah.audio_full_options_formatted %}
+                            {% for key, data_qari in surah.audio_full_options_formatted.items %}
+                                {% if forloop.first %}<source src="{{ data_qari.url }}" type="audio/mpeg">{% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        Browser Anda tidak mendukung elemen audio.
+                    </audio>
+                    {% if surah.audio_full_options_formatted|length > 0 %}
+                    <div class="mt-1 text-center">
+                        <label for="surahAudioSelector" class="sr-only">Pilih Qari:</label>
+                        <select id="surahAudioSelector" 
+                                class="custom-select text-sm p-2.5 pr-8 border border-white/40 rounded-lg bg-white/10 dark:bg-green-700/60 focus:ring-2 focus:ring-white focus:border-white text-white placeholder-gray-300 w-full max-w-xs mx-auto">
+                            {% for key, data_qari in surah.audio_full_options_formatted.items %}
+                                <option value="{{ data_qari.url }}" 
+                                        {% comment %} FIXED THE IF CONDITION HERE - REMOVED PARENTHESES {% endcomment %}
+                                        {% if surah.audio_default == data_qari.url or not surah.audio_default and key == "05" %}selected{% endif %} 
+                                        class="text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-700">
+                                    {{ data_qari.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const selector = document.getElementById('surahAudioSelector');
+                            const player = document.getElementById('surahAudioPlayerMain');
+                            if (selector && player) {
+                                if (selector.options.length > 0 && selector.value) {
+                                    let initialSrcSetBySourceTag = false;
+                                    const sourceTags = player.getElementsByTagName('source');
+                                    if (sourceTags.length > 0 && sourceTags[0].src === selector.value) { initialSrcSetBySourceTag = true; }
+                                    if (!initialSrcSetBySourceTag && player.currentSrc !== selector.value) { player.src = selector.value; player.load(); }
+                                }
+                                selector.addEventListener('change', function() { player.src = this.value; player.load(); /* player.play(); */ });
+                            }
+                        });
+                    </script>
+                    {% endif %} {# Closes if surah.audio_full_options_formatted|length > 0 #}
+                </div>
+                {% endif %} {# Closes if surah.audio_default or surah.audio_full_options_formatted #}
+            {% else %} 
+                <h1 class="text-2xl font-semibold text-center">Surat {{ surah_number_requested }}</h1> 
+            {% endif %} {# Closes if surah.nama_latin and surah.nama_latin != 'N/A' #}
+        </section>
+
+        {% if api_error %}
+            <div class="bg-red-100 dark:bg-red-900/30 border-l-4 border-red-500 dark:border-red-700 text-red-700 dark:text-red-300 px-4 py-3 rounded-md text-center mb-6" role="alert">
+                <p><strong class="font-medium">Error:</strong> {{ api_error }}</p>
+            </div>
+        {% endif %}
+        
+        {% if surah.nomor != 1 and surah.nomor != 9 %}
+            <div class="text-center mb-6 md:mb-8 mt-4">
+                <p class="font-quran text-3xl text-gray-800 dark:text-gray-200" dir="rtl">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>
+            </div>
+        {% endif %}
+
+        {% if ayahs %}
+            <div class="space-y-5"> 
+                {% for ayah_item in ayahs %}
+                <article id="ayahCard-{{surah.nomor}}-{{ayah_item.nomor_ayat}}" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700/80 overflow-hidden group p-5 sm:p-6 transition-all duration-300">
+                    <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-200 dark:border-gray-700/60">
+                        <span class="text-sm font-semibold px-3 py-1.5 bg-green-100 text-green-700 dark:bg-green-700/30 dark:text-green-300 rounded-full">
+                            {{ surah.nomor }}:{{ ayah_item.nomor_ayat }}
+                        </span>
+                        <div class="flex space-x-1 rtl:space-x-reverse">
+                            {% if ayah_item.audio_ayah_default %}
+                            <button title="Play Ayah Audio" 
+                                    onclick="playAyahAudio('{{surah.nomor}}-{{ayah_item.nomor_ayat}}')" 
+                                    class="play-ayah-button text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-300 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6.323 4.912A.75.75 0 017.5 5.451v9.098a.75.75 0 01-1.177.639L2.596 12.15a.75.75 0 010-1.278l3.727-3.027a.75.75 0 010-.001zM15.5 4.75a.75.75 0 00-1.5 0v10.5a.75.75 0 001.5 0V4.75z" clip-rule="evenodd" /></svg>
+                            </button>
+                            {% endif %} {# Closes if ayah_item.audio_ayah_default #}
+                            <button title="Bookmark Ayah" class="text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-300 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 3a1 1 0 011-1h6a1 1 0 011 1v12l-3.5-2L12 15.414V3H7a1 1 0 00-1 1v12l-3.5-2L6 15.414V3z" clip-rule="evenodd" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        {% if ayah_item.teks_arab %}<p class="font-quran text-3xl sm:text-4xl text-right text-gray-900 dark:text-white leading-relaxed" dir="rtl">{{ ayah_item.teks_arab }}</p>{% endif %}
+                        {% if ayah_item.teks_latin %}<p class="text-gray-600 dark:text-gray-400 text-sm italic leading-relaxed pt-2">{{ ayah_item.teks_latin }}</p>{% endif %}
+                        {% if ayah_item.teks_indonesia %}<p class="text-gray-700 dark:text-gray-300 leading-relaxed text-base pt-2">{{ ayah_item.teks_indonesia }}</p>{% endif %}
+                        
+                        {% if ayah_item.audio_ayah_default or ayah_item.audio_options_formatted %}
+                         <div class="pt-3">
+                            <audio id="ayahAudioPlayer{{surah.nomor}}-{{ayah_item.nomor_ayat}}" 
+                                   controlsList="nodownload noremoteplayback" 
+                                   class="w-full max-w-xs h-9 text-xs rounded-md dark:[color-scheme:dark] mb-2 ayah-audio-player"
+                                   data-surah-nomor="{{ surah.nomor }}"
+                                   data-ayah-nomor="{{ ayah_item.nomor_ayat }}">
+                                {% if ayah_item.audio_ayah_default %}<source src="{{ ayah_item.audio_ayah_default }}" type="audio/mpeg">
+                                {% elif ayah_item.audio_options_formatted %}{% for key, data_qari in ayah_item.audio_options_formatted.items %}{% if forloop.first %}<source src="{{ data_qari.url }}" type="audio/mpeg">{% endif %}{% endfor %}{% endif %}
+                            </audio>
+                             {% if ayah_item.audio_options_formatted|length > 0 %}
+                             <div class="mt-1">
+                                <label for="ayahAudioSelector-{{surah.nomor}}-{{ayah_item.nomor_ayat}}" class="sr-only">Pilih Qari Ayah</label>
+                                <select id="ayahAudioSelector-{{surah.nomor}}-{{ayah_item.nomor_ayat}}" 
+                                        onchange="let p = document.getElementById('ayahAudioPlayer{{surah.nomor}}-{{ayah_item.nomor_ayat}}'); p.src = this.value; p.load();"
+                                        class="custom-select text-sm p-2.5 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:focus:border-green-400 w-full max-w-xs">
+                                    {% for key, data_qari in ayah_item.audio_options_formatted.items %}
+                                        <option value="{{ data_qari.url }}" 
+                                                {% comment %} FIXED THE IF CONDITION HERE - REMOVED PARENTHESES {% endcomment %}
+                                                {% if ayah_item.audio_ayah_default == data_qari.url or not ayah_item.audio_ayah_default and key == "05" %}selected{% endif %} 
+                                                class="text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-700">
+                                            {{ data_qari.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                             {% endif %} {# Closes if ayah_item.audio_options_formatted|length > 0 #}
+                        </div>
+                        {% endif %} {# Closes if ayah_item.audio_ayah_default or ayah_item.audio_options_formatted #}
+
+                        {% if ayah_item.tafsir_text %}
+                        <details class="mt-4 group pt-3 border-t border-gray-100 dark:border-gray-700/50">
+                            <summary class="cursor-pointer text-sm font-semibold text-green-600 dark:text-green-400 hover:underline list-none flex justify-between items-center py-1.5 px-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700/50">
+                                <span>Tafsir Kemenag</span>
+                                <svg class="w-4 h-4 transform group-open:rotate-180 transition-transform text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </summary>
+                            <div class="mt-2 tafsir-content text-gray-700 dark:text-gray-200 leading-relaxed text-sm p-3 bg-gray-50 dark:bg-gray-700/30 rounded-md border border-gray-200 dark:border-gray-600/40">
+                                {{ ayah_item.tafsir_text }}
+                            </div>
+                        </details>
+                        {% endif %} {# Closes if ayah_item.tafsir_text #}
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        {% elif not api_error %}
+            <div class="text-center py-12"><svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg><h3 class="mt-2 text-base font-medium text-gray-800 dark:text-white">Ayat tidak ditemukan</h3><p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Ayat untuk Surat ini tidak dapat dimuat.</p></div>
+        {% endif %} {# Closes if ayahs #}
+
+        <div class="mt-10 pt-6 border-t dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
+            {% if surah.surat_sebelumnya and surah.surat_sebelumnya.nomor %}
+            <a href="{% url 'surah_detail' surah.surat_sebelumnya.nomor %}" class="w-full sm:w-auto group inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm hover:shadow-md transition-all">
+                <svg class="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0 transform group-hover:-translate-x-1 transition-transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                {{ surah.surat_sebelumnya.namaLatin }}
+            </a>
+            {% else %} <span class="w-full sm:w-auto h-10"></span> 
+            {% endif %}
+
+            <a href="{% url 'quran_home' %}" class="w-full sm:w-auto order-first sm:order-none inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-green-700 dark:text-green-300 bg-green-100 hover:bg-green-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-offset-gray-900 transition-colors">
+                Daftar Surat
+            </a>
+
+            {% if surah.surat_selanjutnya and surah.surat_selanjutnya.nomor %}
+            <a href="{% url 'surah_detail' surah.surat_selanjutnya.nomor %}" class="w-full sm:w-auto group inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm hover:shadow-md transition-all">
+                {{ surah.surat_selanjutnya.namaLatin }}
+                <svg class="w-4 h-4 ml-2 rtl:mr-2 rtl:ml-0 transform group-hover:translate-x-1 transition-transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+            </a>
+            {% else %} <span class="w-full sm:w-auto h-10"></span> 
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
