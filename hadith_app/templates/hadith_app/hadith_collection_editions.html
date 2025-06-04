@@ -1,0 +1,43 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}{{ collection_info.name|default:"Collection" }} - Editions{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <nav class="mb-6 text-sm" aria-label="Breadcrumb">
+        <ol class="list-none p-0 inline-flex">
+            <li class="flex items-center">
+                <a href="{% url 'hadith_app:hadith_home' %}" class="text-teal-600 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-200">Collections</a>
+            </li>
+            <li class="flex items-center">
+                <span class="mx-2 text-gray-500 dark:text-gray-400">/</span>
+                <span class="text-gray-700 dark:text-gray-300">{{ collection_info.name|default:collection_key }}</span>
+            </li>
+        </ol>
+    </nav>
+
+    <h1 class="text-4xl font-bold mb-8 text-gray-800 dark:text-gray-100">{{ collection_info.name|default:collection_key }}</h1>
+    <h2 class="text-2xl font-semibold mb-6 text-gray-700 dark:text-gray-300">Available Editions</h2>
+
+    {% if collection_info.editions %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for edition in collection_info.editions %}
+                <a href="{% url 'hadith_app:hadith_edition_sections' collection_key=collection_info.key edition_name=edition.name %}" 
+                   class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="text-xl font-semibold text-teal-700 dark:text-teal-400 mb-1">{{ edition.language }}</h3>
+                    {% if edition.author and edition.author != "Unknown" %}
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Author: {{ edition.author }}</p>
+                    {% endif %}
+                    {% if edition.comments %}
+                        <p class="text-xs text-gray-500 dark:text-gray-400 italic mt-2">{{ edition.comments }}</p>
+                    {% endif %}
+                    <span class="mt-3 inline-block text-sm text-teal-600 dark:text-teal-500 hover:text-teal-800 dark:hover:text-teal-300 font-medium">View Sections &rarr;</span>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center text-gray-600 dark:text-gray-400 text-xl">No editions found for this collection, or collection data could not be loaded.</p>
+    {% endif %}
+</div>
+{% endblock %}

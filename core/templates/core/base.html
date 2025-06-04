@@ -4,41 +4,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Islamic App{% endblock %} - Qur'an and hadith</title> {# Renamed for a fresh feel #}
+    <title>{% block title %}Islamic App{% endblock %} - Qur'an and Hadith</title>
     <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
-    {# Favicon links #}
-    <link rel="icon" href="{% static 'core/images/favicon.ico' %}" sizes="any"> {# Assuming you add a favicon #}
-    <link rel="apple-touch-icon" href="{% static 'core/images/apple-touch-icon.png' %}">
+    {# Favicon links - Using your data SVG icon #}
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 M3 10.5v.75A2.25 2.25 0 005.25 13.5h13.5A2.25 2.25 0 0021 11.25v-.75m-18 0A2.25 2.25 0 005.25 9h13.5A2.25 2.25 0 0021 11.25v0M17.25 12a2.25 2.25 0 002.25-2.25v-.75'/%3E%3C/svg%3E">
+    {% comment %} <link rel="apple-touch-icon" href="{% static 'core/images/apple-touch-icon.png' %}">  You can re-enable if you have this image {% endcomment %}
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)">
-    {% block head_extra %}{% endblock %}
+    <meta name="theme-color" content="#1F2937" media="(prefers-color-scheme: dark)"> {# Tailwind gray-800 #}
+    {% block head_extra %}
+    <style>
+        /* Basic styling for the calendar day cells, can be enhanced */
+        #hijriCalendarGrid > div {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 2.25rem; /* Adjust as needed, matches p-1.5 with 0.25rem padding for a 2.5rem total clickable area */
+            width: 100%; 
+        }
+    </style>
+    {% endblock %}
 </head>
-<body class="flex flex-col min-h-screen">
+<body class="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
 
-    <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50 transition-colors duration-300">
+    <nav class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50 transition-colors duration-300">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center">
                     <a href="{% url 'home' %}" class="flex-shrink-0 flex items-center space-x-2 rtl:space-x-reverse">
-                        {# Replace with your actual SVG logo #}
-                        <svg class="h-8 w-auto text-green-600 dark:text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <svg class="h-8 w-auto text-teal-600 dark:text-teal-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 M3 10.5v.75A2.25 2.25 0 005.25 13.5h13.5A2.25 2.25 0 0021 11.25v-.75m-18 0A2.25 2.25 0 005.25 9h13.5A2.25 2.25 0 0021 11.25v0M17.25 12a2.25 2.25 0 002.25-2.25v-.75" />
                         </svg>
-                        <span class="text-xl font-semibold text-gray-800 dark:text-white">Qur'an and hadith</span>
+                        <span class="text-xl font-semibold text-gray-800 dark:text-white">Qur'an and Hadith</span>
                     </a>
                 </div>
-                <div class="hidden md:flex md:items-center md:space-x-2 rtl:space-x-reverse">
-                    <a href="{% url 'home' %}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-green-600 dark:hover:text-green-400 transition-colors">Home</a>
-                    <a href="{% url 'quran_home' %}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-green-600 dark:hover:text-green-400 transition-colors">Al-Qur'an</a>
-                    <a href="{% url 'hadith_home' %}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-green-600 dark:hover:text-green-400 transition-colors">Hadith</a>
+                <div class="hidden md:flex md:items-center md:space-x-1 lg:space-x-2 rtl:space-x-reverse">
+                    <a href="{% url 'home' %}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-teal-600 dark:hover:text-teal-400 transition-colors">Home</a>
+                    <a href="{% url 'quran_app:quran_home' %}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-teal-600 dark:hover:text-teal-400 transition-colors">Al-Qur'an</a>
+                    <a href="{% url 'hadith_app:hadith_home' %}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-teal-600 dark:hover:text-teal-400 transition-colors">Hadith</a>
                 </div>
-                <div class="flex items-center">
-                    <button id="darkModeToggle" aria-label="Toggle Dark Mode" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-green-600 dark:hover:text-green-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-800 focus:ring-green-500 transition-colors">
+                <div class="flex items-center space-x-1"> {# Reduced space for more items #}
+                    <div class="relative">
+                        <div>
+                            <button type="button" id="hijriCalendarButton" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-800 focus:ring-teal-500 transition-colors" aria-expanded="false" aria-haspopup="true" title="Hijri Calendar">
+                                <span class="sr-only">Open Hijri calendar</span>
+                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5M12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zm2.25-4.5h.008v.008H12v-.008zm2.25 0h.008v.008H14.25v-.008zm0 2.25h.008v.008H14.25V15zm0 2.25h.008v.008H14.25v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008z" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div id="hijriCalendarDropdown" 
+                             class="hidden origin-top-right absolute right-0 mt-2 w-72 sm:w-80 rounded-md shadow-xl py-1 bg-white dark:bg-gray-800 ring-1 ring-black dark:ring-gray-700 ring-opacity-5 focus:outline-none" 
+                             role="menu" aria-orientation="vertical" aria-labelledby="hijriCalendarButton" tabindex="-1">
+                            <div class="p-3 sm:p-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <button id="prevHijriMonth" aria-label="Previous month" class="p-1.5 rounded-full text-teal-600 dark:text-teal-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                    </button>
+                                    <span id="hijriMonthYear" class="mx-2 font-semibold text-sm text-gray-700 dark:text-gray-200 whitespace-nowrap">Loading...</span>
+                                    <button id="nextHijriMonth" aria-label="Next month" class="p-1.5 rounded-full text-teal-600 dark:text-teal-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                                    </button>
+                                </div>
+                                <div id="hijriCalendarGridHeader" class="grid grid-cols-7 text-xs text-center text-gray-500 dark:text-gray-400 font-medium mb-1 py-1 border-b dark:border-gray-700">
+                                    <span>Su</span> <span>Mo</span> <span>Tu</span> <span>We</span> <span>Th</span> <span>Fr</span> <span>Sa</span>
+                                </div>
+                                <div id="hijriCalendarGrid" class="grid grid-cols-7 gap-px text-sm text-center mt-1">
+                                    <div class="col-span-7 text-gray-400 dark:text-gray-500 p-4">Loading dates...</div>
+                                </div>
+                                <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                                    <p class="text-xs text-center text-gray-500 dark:text-gray-400">Today: <span id="gregorianDateToday"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {# End Hijri Calendar #}
+
+                    <button id="darkModeToggle" aria-label="Toggle Dark Mode" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-teal-600 dark:hover:text-teal-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-800 focus:ring-teal-500 transition-colors">
                         <svg id="icon-sun" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-.707 12.728a1 1 0 010-1.414l.707-.707a1 1 0 111.414 1.414l-.707.707a1 1 0 01-1.414 0zM17 15a1 1 0 100 2h-1a1 1 0 100-2h1zm-4-8a1 1 0 011-1h1a1 1 0 110 2h-1a1 1 0 01-1-1zM3 11a1 1 0 100 2h1a1 1 0 100-2H3z" clip-rule="evenodd"></path></svg>
                         <svg id="icon-moon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
                     </button>
-                    <div class="md:hidden ml-2 rtl:mr-2">
-                        <button id="mobileMenuButton" type="button" class="p-2 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-green-500" aria-controls="mobile-menu-flyout" aria-expanded="false">
+                    <div class="md:hidden ml-2 rtl:mr-2"> {# For mobile menu button #}
+                        <button id="mobileMenuButton" type="button" class="p-2 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-teal-500" aria-controls="mobile-menu-flyout" aria-expanded="false">
                             <span class="sr-only">Open main menu</span>
                             <svg class="block h-6 w-6" id="icon-menu-burger" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
                             <svg class="hidden h-6 w-6" id="icon-menu-close" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -49,78 +95,294 @@
         </div>
 
         <div class="md:hidden hidden" id="mobile-menu-flyout">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white dark:bg-gray-800 shadow-lg">
-                <a href="{% url 'home' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-green-600 dark:hover:text-green-400 transition-colors">Home</a>
-                <a href="{% url 'quran_home' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-green-600 dark:hover:text-green-400 transition-colors">Al-Qur'an</a>
-                <a href="{% url 'hadith_home' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-green-600 dark:hover:text-green-400 transition-colors">Hadith</a>
+             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white dark:bg-gray-800 shadow-lg">
+                <a href="{% url 'home' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-teal-600 dark:hover:text-teal-400 transition-colors">Home</a>
+                <a href="{% url 'quran_app:quran_home' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-teal-600 dark:hover:text-teal-400 transition-colors">Al-Qur'an</a>
+                <a href="{% url 'hadith_app:hadith_home' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-teal-600 dark:hover:text-teal-400 transition-colors">Hadith</a>
             </div>
         </div>
     </nav>
 
-    <main class="flex-grow py-6 sm:py-8">
+    <main class="flex-grow py-6 sm:py-8 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
         {% block content %}
         {% endblock %}
     </main>
 
-    <footer class="bg-gray-200 dark:bg-gray-800 border-t border-gray-300 dark:border-gray-700/50 transition-colors duration-300">
+    <footer class="bg-gray-100 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 transition-colors duration-300">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-xs text-gray-600 dark:text-gray-400">
-            <p>&copy; {% now "Y" %} Qur'an and hadith. A journey of faith and knowledge.</p>
+            <p>&copy; {% now "Y" %} Qur'an and Hadith. A journey of faith and knowledge.</p>
+            <p class="mt-1">Current Time in Karanganyar: <span id="currentTime">Loading...</span></p>
         </div>
     </footer>
-
+    
+    {# Your jQuery include is here, which is fine #}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    {# Consider moving this JS to core/static/core/js/main.js #}
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const darkModeToggle = document.getElementById('darkModeToggle');
-            const iconSun = document.getElementById('icon-sun');
-            const iconMoon = document.getElementById('icon-moon');
-            const htmlEl = document.documentElement;
+    document.addEventListener('DOMContentLoaded', function () {
+        // --- Dark Mode & Mobile Menu Toggle Logic ---
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const iconSun = document.getElementById('icon-sun');
+        const iconMoon = document.getElementById('icon-moon');
+        const htmlEl = document.documentElement;
 
-            const mobileMenuButton = document.getElementById('mobileMenuButton');
-            const mobileMenuFlyout = document.getElementById('mobile-menu-flyout');
-            const iconMenuBurger = document.getElementById('icon-menu-burger');
-            const iconMenuClose = document.getElementById('icon-menu-close');
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const mobileMenuFlyout = document.getElementById('mobile-menu-flyout');
+        const iconMenuBurger = document.getElementById('icon-menu-burger');
+        const iconMenuClose = document.getElementById('icon-menu-close');
 
-            function setTheme(theme) {
-                if (theme === 'dark') {
-                    htmlEl.classList.add('dark');
-                    if(iconSun) iconSun.style.display = 'none';
-                    if(iconMoon) iconMoon.style.display = 'block';
-                    localStorage.setItem('theme', 'dark');
-                } else {
-                    htmlEl.classList.remove('dark');
-                    if(iconSun) iconSun.style.display = 'block';
-                    if(iconMoon) iconMoon.style.display = 'none';
-                    localStorage.setItem('theme', 'light');
-                }
-            }
-
-            const storedTheme = localStorage.getItem('theme');
-            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (storedTheme) {
-                setTheme(storedTheme);
+        function setTheme(theme) {
+            if (theme === 'dark') {
+                htmlEl.classList.add('dark');
+                if(iconSun) iconSun.style.display = 'none';
+                if(iconMoon) iconMoon.style.display = 'block';
+                localStorage.setItem('theme', 'dark');
             } else {
-                setTheme(systemPrefersDark ? 'dark' : 'light');
+                htmlEl.classList.remove('dark');
+                if(iconSun) iconSun.style.display = 'block';
+                if(iconMoon) iconMoon.style.display = 'none';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        const initialStoredTheme = localStorage.getItem('theme');
+        const initialSystemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        let currentSystemTheme = initialStoredTheme ? initialStoredTheme : (initialSystemPrefersDark ? 'dark' : 'light');
+        setTheme(currentSystemTheme); // Apply theme on initial load
+
+        if(darkModeToggle) {
+            darkModeToggle.addEventListener('click', () => {
+                currentSystemTheme = htmlEl.classList.contains('dark') ? 'light' : 'dark'; // Toggle
+                setTheme(currentSystemTheme);
+            });
+        }
+
+        if(mobileMenuButton && mobileMenuFlyout && iconMenuBurger && iconMenuClose) {
+            mobileMenuButton.addEventListener('click', () => {
+                const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+                mobileMenuButton.setAttribute('aria-expanded', String(!isExpanded));
+                mobileMenuFlyout.classList.toggle('hidden');
+                iconMenuBurger.classList.toggle('hidden');
+                iconMenuClose.classList.toggle('hidden');
+            });
+        }
+        // --- End Dark Mode & Mobile Menu ---
+
+
+        // --- Hijri Calendar Logic ---
+        const hijriCalendarButton = document.getElementById('hijriCalendarButton');
+        const hijriCalendarDropdown = document.getElementById('hijriCalendarDropdown');
+        const hijriMonthYearEl = document.getElementById('hijriMonthYear');
+        const hijriCalendarGridEl = document.getElementById('hijriCalendarGrid');
+        const gregorianDateTodayEl = document.getElementById('gregorianDateToday');
+        const prevHijriMonthButton = document.getElementById('prevHijriMonth');
+        const nextHijriMonthButton = document.getElementById('nextHijriMonth');
+        const currentTimeEl = document.getElementById('currentTime'); // For footer time
+
+        let currentDisplayedHijriYear = null;
+        let currentDisplayedHijriMonth = null;
+
+        // Function to update current time in Karanganyar
+        function updateCurrentTime() {
+            if (currentTimeEl) {
+                const now = new Date();
+                // Options for Karanganyar (Asia/Jakarta is WIB, GMT+7)
+                const options = { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+                currentTimeEl.textContent = now.toLocaleTimeString('en-GB', options) + ' WIB';
+            }
+        }
+        if (currentTimeEl) { // Check if element exists before setting up interval
+            updateCurrentTime();
+            setInterval(updateCurrentTime, 1000);
+        }
+
+
+        async function fetchAndRenderHijriCalendar(year, month) {
+            if (!hijriMonthYearEl || !hijriCalendarGridEl) {
+                console.error("Hijri calendar elements (month/year or grid) not found in DOM.");
+                return;
             }
 
-            if(darkModeToggle) {
-                darkModeToggle.addEventListener('click', () => {
-                    const currentTheme = htmlEl.classList.contains('dark') ? 'dark' : 'light';
-                    setTheme(currentTheme === 'dark' ? 'light' : 'dark');
-                });
+            hijriMonthYearEl.textContent = 'Loading...';
+            hijriCalendarGridEl.innerHTML = '<div class="col-span-7 text-center p-4 text-gray-500 dark:text-gray-400">Loading dates...</div>';
+
+            try {
+                // *** USE HTTPS FOR API CALLS ***
+                const apiUrl = `https://api.aladhan.com/v1/hCalendar?year=${year}&month=${month}`;
+                // console.log("Fetching Hijri Calendar from:", apiUrl); // For debugging
+                const response = await fetch(apiUrl);
+                
+                if (!response.ok) {
+                    const errorText = await response.text(); // Get error text from response body
+                    console.error(`API Error Response (hCalendar): ${response.status} ${response.statusText}`, errorText.substring(0, 500)); // Log first 500 chars
+                    throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+                }
+                const calendarData = await response.json();
+
+                if (calendarData.code === 200 && calendarData.data && calendarData.data.length > 0) {
+                    const firstDayData = calendarData.data[0].date.hijri;
+                    hijriMonthYearEl.textContent = `${firstDayData.month.en} ${firstDayData.year} AH`;
+                    
+                    currentDisplayedHijriYear = parseInt(firstDayData.year);
+                    currentDisplayedHijriMonth = parseInt(firstDayData.month.number);
+
+                    renderCalendarGrid(calendarData.data, currentDisplayedHijriYear, currentDisplayedHijriMonth);
+                } else {
+                    hijriMonthYearEl.textContent = 'Error';
+                    hijriCalendarGridEl.innerHTML = '<div class="col-span-7 text-center p-4 text-red-500 dark:text-red-400">Could not load calendar data.</div>';
+                    console.error("Error fetching Hijri calendar data or invalid format:", calendarData);
+                }
+            } catch (error) {
+                hijriMonthYearEl.textContent = 'Error';
+                hijriCalendarGridEl.innerHTML = `<div class="col-span-7 text-center p-4 text-red-500 dark:text-red-400">Failed: ${error.message}</div>`;
+                console.error("Error in fetchAndRenderHijriCalendar:", error);
+            }
+        }
+
+        function renderCalendarGrid(daysData, displayedHYear, displayedHMonth) {
+            if (!hijriCalendarGridEl) return;
+            hijriCalendarGridEl.innerHTML = ''; 
+
+            if (!daysData || daysData.length === 0) {
+                 hijriCalendarGridEl.innerHTML = '<div class="col-span-7 text-gray-400 dark:text-gray-500 p-4">No date data.</div>';
+                 return;
+            }
+            
+            // API's gregorian.weekday.number is ISO-8601 (1=Monday, ..., 7=Sunday)
+            let firstDayOfMonthGregorianWeekdayNumber = parseInt(daysData[0].date.gregorian.weekday.number);
+            // Convert to JS Date standard (Sunday=0, Monday=1, ...)
+            let startDayOffset = (firstDayOfMonthGregorianWeekdayNumber % 7); 
+
+            for (let i = 0; i < startDayOffset; i++) {
+                const emptyCell = document.createElement('div');
+                hijriCalendarGridEl.appendChild(emptyCell);
             }
 
-            if(mobileMenuButton && mobileMenuFlyout && iconMenuBurger && iconMenuClose) {
-                mobileMenuButton.addEventListener('click', () => {
-                    const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
-                    mobileMenuButton.setAttribute('aria-expanded', String(!isExpanded));
-                    mobileMenuFlyout.classList.toggle('hidden');
-                    iconMenuBurger.classList.toggle('hidden');
-                    iconMenuClose.classList.toggle('hidden');
-                });
+            const today = new Date();
+            const todayGregDayStr = today.getDate().toString().padStart(2, '0');
+            const todayGregMonthStr = (today.getMonth() + 1).toString().padStart(2, '0'); // JS months are 0-indexed
+            const todayGregYearStr = today.getFullYear().toString();
+
+            daysData.forEach(dayEntry => {
+                const cell = document.createElement('div');
+                cell.textContent = dayEntry.date.hijri.day;
+                // Base classes for all cells
+                cell.className = 'p-1.5 rounded-full hover:bg-teal-100 dark:hover:bg-gray-700 cursor-pointer text-gray-700 dark:text-gray-200 flex items-center justify-center h-9 w-9'; 
+                
+                const isCurrentActualDay = 
+                    dayEntry.date.gregorian.day === todayGregDayStr &&
+                    dayEntry.date.gregorian.month.number.toString().padStart(2,'0') === todayGregMonthStr &&
+                    dayEntry.date.gregorian.year === todayGregYearStr;
+                
+                const cellHijriYear = parseInt(dayEntry.date.hijri.year);
+                const cellHijriMonth = parseInt(dayEntry.date.hijri.month.number);
+
+                // Highlight "today" only if it's in the currently displayed Hijri month and year
+                if (isCurrentActualDay && cellHijriYear === displayedHYear && cellHijriMonth === displayedHMonth) {
+                    cell.classList.add('bg-teal-500', 'text-white', 'dark:bg-teal-600', 'dark:text-white', 'font-semibold');
+                    cell.classList.remove('hover:bg-teal-100', 'dark:hover:bg-gray-700', 'text-gray-700', 'dark:text-gray-200');
+                }
+                hijriCalendarGridEl.appendChild(cell);
+            });
+        }
+
+        function updateGregorianDateToday() {
+            if (gregorianDateTodayEl) {
+                const today = new Date();
+                const options = { year: 'numeric', month: 'short', day: 'numeric' };
+                gregorianDateTodayEl.textContent = today.toLocaleDateString('en-GB', options);
             }
-        });
+        }
+        
+        if (hijriCalendarButton && hijriCalendarDropdown) {
+            hijriCalendarButton.addEventListener('click', async function(event) {
+                event.stopPropagation();
+                const isHidden = hijriCalendarDropdown.classList.contains('hidden');
+                if (isHidden) {
+                    const todayForInitialHijri = new Date();
+                    try {
+                        const gDateStr = `${todayForInitialHijri.getDate().toString().padStart(2, '0')}-${(todayForInitialHijri.getMonth() + 1).toString().padStart(2, '0')}-${todayForInitialHijri.getFullYear()}`;
+                        // *** CHANGED TO HTTPS ***
+                        const initialHijriResponse = await fetch(`https://api.aladhan.com/v1/gToH?date=${gDateStr}`);
+                        if (!initialHijriResponse.ok) {
+                            const errorText = await initialHijriResponse.text();
+                            console.error(`API Error (gToH): ${initialHijriResponse.status} ${initialHijriResponse.statusText}`, errorText.substring(0,500));
+                            throw new Error(`Failed to fetch initial Hijri date (status ${initialHijriResponse.status})`);
+                        }
+                        const initialHijriData = await initialHijriResponse.json();
+
+                        if (initialHijriData.code === 200 && initialHijriData.data && initialHijriData.data.hijri) {
+                            currentDisplayedHijriYear = parseInt(initialHijriData.data.hijri.year);
+                            currentDisplayedHijriMonth = parseInt(initialHijriData.data.hijri.month.number);
+                            fetchAndRenderHijriCalendar(currentDisplayedHijriYear, currentDisplayedHijriMonth);
+                        } else {
+                            console.error("Could not get initial Hijri date from API response:", initialHijriData);
+                            if(hijriMonthYearEl) hijriMonthYearEl.textContent = 'Error';
+                            if(hijriCalendarGridEl) hijriCalendarGridEl.innerHTML = '<div class="col-span-7 text-center p-4 text-red-500 dark:text-red-400">Could not initialize.</div>';
+                        }
+                    } catch(error) {
+                        console.error("Error initializing Hijri Calendar:", error);
+                        if(hijriMonthYearEl) hijriMonthYearEl.textContent = 'Error';
+                        if(hijriCalendarGridEl) hijriCalendarGridEl.innerHTML = `<div class="col-span-7 text-center p-4 text-red-500 dark:text-red-400">Init failed. Check console.</div>`;
+                    }
+                    
+                    updateGregorianDateToday();
+                    hijriCalendarDropdown.classList.remove('hidden');
+                    hijriCalendarButton.setAttribute('aria-expanded', 'true');
+                } else {
+                    hijriCalendarDropdown.classList.add('hidden');
+                    hijriCalendarButton.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            // Close dropdown if clicked outside
+            document.addEventListener('click', function(event) {
+                if (hijriCalendarDropdown && !hijriCalendarDropdown.classList.contains('hidden')) {
+                    // Check if the click is outside the dropdown AND outside the button
+                    if (!hijriCalendarButton.contains(event.target) && !hijriCalendarDropdown.contains(event.target)) {
+                        hijriCalendarDropdown.classList.add('hidden');
+                        hijriCalendarButton.setAttribute('aria-expanded', 'false');
+                    }
+                }
+            });
+        }
+
+        if (prevHijriMonthButton) {
+            prevHijriMonthButton.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent dropdown from closing
+                if (currentDisplayedHijriYear !== null && currentDisplayedHijriMonth !== null) {
+                    currentDisplayedHijriMonth--;
+                    if (currentDisplayedHijriMonth < 1) {
+                        currentDisplayedHijriMonth = 12;
+                        currentDisplayedHijriYear--;
+                    }
+                    fetchAndRenderHijriCalendar(currentDisplayedHijriYear, currentDisplayedHijriMonth);
+                } else {
+                    console.log("Prev month clicked but current Hijri date not set.");
+                }
+            });
+        }
+
+        if (nextHijriMonthButton) {
+            nextHijriMonthButton.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent dropdown from closing
+                 if (currentDisplayedHijriYear !== null && currentDisplayedHijriMonth !== null) {
+                    currentDisplayedHijriMonth++;
+                    if (currentDisplayedHijriMonth > 12) {
+                        currentDisplayedHijriMonth = 1;
+                        currentDisplayedHijriYear++;
+                    }
+                    fetchAndRenderHijriCalendar(currentDisplayedHijriYear, currentDisplayedHijriMonth);
+                } else {
+                    console.log("Next month clicked but current Hijri date not set.");
+                }
+            });
+        }
+
+        if (gregorianDateTodayEl) { // Check if element exists before initial update
+             updateGregorianDateToday();
+        }
+
+    });
     </script>
     {% block scripts %}{% endblock %}
 </body>

@@ -1,7 +1,7 @@
 {% extends 'core/base.html' %}
 {% load static %}
 
-{% block title %}Welcome - MyGuidance{% endblock %}
+{% block title %}Qur'an and Hadith{% endblock %}
 
 {% block head_extra %}
 <style>
@@ -35,7 +35,9 @@
     {# Welcome Header, Current Time, Hijri Button #}
     <section class="text-center mb-8 md:mb-10">
         <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white mb-2">
-            Assalamu'alaikum!
+            ٱلسَّلَامُ عَلَيْكُمْ وَرَحْمَةُ ٱللَّٰهِ وَبَرَكَاتُهُ
+
+
         </h1>
         <p id="currentTimeDisplay" class="text-xl text-green-600 dark:text-green-400 font-medium">
             Loading current time...
@@ -45,12 +47,12 @@
                 {{ prayer_date_readable|default:"Today" }}
             </p>
             {% if hijri_date_details %}
-            <button id="showHijriCalendarBtn" class="text-sm text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 font-medium underline focus:outline-none flex items-center space-x-1 rtl:space-x-reverse">
+            <span class="text-sm text-green-600 dark:text-green-400 font-medium flex items-center space-x-1 rtl:space-x-reverse">
                 <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2zm-1 5.5c0-.138.112-.25.25-.25h10.5a.25.25 0 01.25.25v6.5a.25.25 0 01-.25.25H4.75a.25.25 0 01-.25-.25v-6.5zm.75 1.5a.75.75 0 000 1.5h1.5a.75.75 0 000-1.5H5.5zm3 0a.75.75 0 000 1.5h1.5a.75.75 0 000-1.5H8.5zm3 0a.75.75 0 000 1.5h1.5a.75.75 0 000-1.5h-1.5z" clip-rule="evenodd" />
                 </svg>
                 <span>{{ hijri_date_details.day }} {{ hijri_date_details.month_en }} {{ hijri_date_details.year }} {{ hijri_date_details.designation }}</span>
-            </button>
+            </span>
             {% elif prayer_hijri_date_readable %}
              <p class="text-sm text-gray-500 dark:text-gray-400">| {{ prayer_hijri_date_readable }}</p>
             {% endif %}
@@ -91,22 +93,22 @@
     {# Main Feature Cards (Same as before) #}
     <section class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
         {# ... (Al-Qur'an and Hadith cards from previous response) ... #}
-        <a href="{% url 'quran_home' %}" class="block group bg-gradient-to-br from-green-500 to-teal-600 dark:from-green-600 dark:to-teal-700 p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+        <a href="{% url 'quran_app:quran_home' %}" class="block group bg-gradient-to-br from-green-500 to-teal-600 dark:from-green-600 dark:to-teal-700 p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
             <div class="flex items-center space-x-4 rtl:space-x-reverse">
                 <div class="bg-white/20 p-3 rounded-lg"><svg class="w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg></div>
-                <div><h2 class="text-xl font-semibold text-white">Al-Qur'an Al-Karim</h2><p class="text-sm text-green-100 opacity-90">Baca dan pahami firman Allah.</p></div>
+                <div><h2 class="text-xl font-semibold text-white">Al-Qur'an Al-Karim</h2><p class="text-sm text-green-100 opacity-90">Temukan petunjuk hidup dari firman Allah عَزَّ وَجَلَّ</p></div>
             </div>
         </a>
-        <a href="{% url 'hadith_home' %}" class="block group bg-gradient-to-br from-teal-500 to-cyan-600 dark:from-teal-600 dark:to-cyan-700 p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+        <a href="{% url 'hadith_app:hadith_home' %}" class="block group bg-gradient-to-br from-teal-500 to-cyan-600 dark:from-teal-600 dark:to-cyan-700 p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
             <div class="flex items-center space-x-4 rtl:space-x-reverse">
                 <div class="bg-white/20 p-3 rounded-lg"><svg class="w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18V7.875c0-.621.504-1.125 1.125-1.125H6.75m3-4.125V5.625m0 0A2.25 2.25 0 0112 8.25m0 0H6.75m5.25 0H18m2.25-4.125c0 .621.504 1.125 1.125 1.125H21V5.625c0-1.036-.84-1.875-1.875-1.875H18m2.25 0V3.75m0 0h-1.5m1.5 0c0-.621-.504-1.125-1.125-1.125H6.75c-1.035 0-1.875.84-1.875 1.875v10.5c0 1.035.84 1.875 1.875 1.875h10.5c1.035 0 1.875-.84 1.875-1.875V9.75" /></svg></div>
-                <div><h2 class="text-xl font-semibold text-white">Kumpulan Hadith</h2><p class="text-sm text-teal-100 opacity-90">Teladani sunnah Rasulullah SAW.</p></div>
+                <div><h2 class="text-xl font-semibold text-white">Kumpulan Hadith</h2><p class="text-sm text-teal-100 opacity-90">Hidupkan sunnah Nabi ﷺ dalam keseharian.</p></div>
             </div>
         </a>
     </section>
 </div>
 
-{# Hijri Calendar Modal Structure (Initially Hidden) #}
+{# Hijri Calendar Modal Structure (with full calendar grid) #}
 <div id="hijriCalendarModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden modal-overlay">
     <div class="modal-content">
         <div class="flex justify-between items-center pb-3 border-b dark:border-gray-700">
@@ -116,25 +118,7 @@
             </button>
         </div>
         <div class="mt-4 space-y-2 text-center">
-            {% if hijri_date_details %}
-                <p class="text-3xl font-semibold text-green-600 dark:text-green-400">{{ hijri_date_details.day }}</p>
-                <p class="text-xl text-gray-800 dark:text-white font-quran" dir="rtl">{{ hijri_date_details.month_ar }}</p>
-                <p class="text-md text-gray-700 dark:text-gray-300">{{ hijri_date_details.month_en }}</p>
-                <p class="text-2xl font-semibold text-green-600 dark:text-green-400">{{ hijri_date_details.year }} <span class="text-sm">{{ hijri_date_details.designation }}</span></p>
-                {% if hijri_date_details.holidays %}
-                    <div class="mt-3 pt-3 border-t dark:border-gray-700">
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Hari Penting:</p>
-                        {% for holiday in hijri_date_details.holidays %}
-                            <p class="text-sm text-green-600 dark:text-green-400">{{ holiday }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            {% else %}
-                <p class="text-gray-500 dark:text-gray-400">Informasi tanggal Hijriah tidak tersedia.</p>
-            {% endif %}
-            <p class="text-xs text-gray-400 dark:text-gray-500 mt-4">
-                Untuk kalender bulanan lengkap, silakan merujuk pada aplikasi kalender Hijriah terdedikasi.
-            </p>
+            {% include 'core/partials/hijri_calendar_grid.html' %}
         </div>
     </div>
 </div>
@@ -246,6 +230,141 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.body.classList.remove('overflow-hidden');
             }
         });
+    }
+});
+
+// --- Hijri Calendar Modal JS (using Aladhan gToHCalendar API with UAQ method) ---
+function setupHijriCalendarModal() {
+    const hijriMonthYearEl = document.getElementById('hijriMonthYearModal');
+    const hijriCalendarGridEl = document.getElementById('hijriCalendarGridModal');
+    const gregorianDateTodayEl = document.getElementById('gregorianDateTodayModal');
+    const prevHijriMonthButton = document.getElementById('prevHijriMonthModal');
+    const nextHijriMonthButton = document.getElementById('nextHijriMonthModal');
+
+    // Track Gregorian month/year for navigation
+    let currentDisplayedGregorianYear = new Date().getFullYear();
+    let currentDisplayedGregorianMonth = new Date().getMonth() + 1; // JS months are 0-indexed
+
+    function updateGregorianDateToday() {
+        if (gregorianDateTodayEl) {
+            const today = new Date();
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            gregorianDateTodayEl.textContent = today.toLocaleDateString('en-GB', options);
+        }
+    }
+
+    async function fetchAndRenderHijriCalendar(gregorianYear, gregorianMonth) {
+        if (!hijriMonthYearEl || !hijriCalendarGridEl) return;
+        hijriMonthYearEl.textContent = 'Loading...';
+        hijriCalendarGridEl.innerHTML = '<div class="col-span-7 text-center p-4 text-gray-500 dark:text-gray-400">Loading dates...</div>';
+        try {
+            const apiUrl = `https://api.aladhan.com/v1/gToHCalendar/${gregorianMonth}/${gregorianYear}?calendarMethod=UAQ`;
+            console.log('Fetching Hijri calendar:', apiUrl);
+            const response = await fetch(apiUrl);
+            if (!response.ok) throw new Error(`API request failed: ${response.status}`);
+            const calendarData = await response.json();
+            if (calendarData.code === 200 && calendarData.data && calendarData.data.length > 0) {
+                // Use the first day's Hijri info for the header
+                const firstDayData = calendarData.data[0].hijri;
+                hijriMonthYearEl.textContent = `${firstDayData.month.en} ${firstDayData.year} AH`;
+                renderCalendarGrid(calendarData.data, firstDayData.month.number, firstDayData.year);
+            } else {
+                hijriMonthYearEl.textContent = 'Error';
+                hijriCalendarGridEl.innerHTML = '<div class="col-span-7 text-center p-4 text-red-500 dark:text-red-400">Could not load calendar data.</div>';
+            }
+        } catch (error) {
+            hijriMonthYearEl.textContent = 'Error';
+            hijriCalendarGridEl.innerHTML = `<div class="col-span-7 text-center p-4 text-red-500 dark:text-red-400">Failed: ${error.message}</div>`;
+        }
+    }
+
+    function renderCalendarGrid(daysData, hijriMonthNumber, hijriYear) {
+        if (!hijriCalendarGridEl) return;
+        hijriCalendarGridEl.innerHTML = '';
+        if (!daysData || daysData.length === 0) {
+            hijriCalendarGridEl.innerHTML = '<div class="col-span-7 text-gray-400 dark:text-gray-500 p-4">No date data.</div>';
+            return;
+        }
+        // Find the first day of the Gregorian month
+        const firstDay = daysData[0];
+        const firstWeekday = new Date(
+            firstDay.gregorian.year,
+            firstDay.gregorian.month.number - 1,
+            firstDay.gregorian.day
+        ).getDay(); // 0=Sunday, 1=Monday, ...
+        for (let i = 0; i < firstWeekday; i++) {
+            const emptyCell = document.createElement('div');
+            hijriCalendarGridEl.appendChild(emptyCell);
+        }
+        daysData.forEach(dayEntry => {
+            const cell = document.createElement('div');
+            cell.textContent = dayEntry.hijri.day;
+            cell.title = `${dayEntry.gregorian.date} / ${dayEntry.hijri.date}`;
+            cell.className = 'p-1.5 rounded-full hover:bg-teal-100 dark:hover:bg-gray-700 cursor-pointer text-gray-700 dark:text-gray-200 flex items-center justify-center h-9 w-9';
+            // Highlight today
+            const today = new Date();
+            if (
+                parseInt(dayEntry.gregorian.day) === today.getDate() &&
+                parseInt(dayEntry.gregorian.month.number) === (today.getMonth() + 1) &&
+                parseInt(dayEntry.gregorian.year) === today.getFullYear()
+            ) {
+                cell.classList.add('bg-teal-500', 'text-white', 'dark:bg-teal-600', 'dark:text-white', 'font-semibold');
+            }
+            // Optionally, highlight holidays
+            if (dayEntry.hijri.holidays && dayEntry.hijri.holidays.length > 0) {
+                cell.classList.add('ring-2', 'ring-green-400', 'dark:ring-green-500');
+                cell.title += '\n' + dayEntry.hijri.holidays.join(', ');
+            }
+            hijriCalendarGridEl.appendChild(cell);
+        });
+    }
+
+    if (prevHijriMonthButton) {
+        prevHijriMonthButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentDisplayedGregorianMonth--;
+            if (currentDisplayedGregorianMonth < 1) {
+                currentDisplayedGregorianMonth = 12;
+                currentDisplayedGregorianYear--;
+            }
+            fetchAndRenderHijriCalendar(currentDisplayedGregorianYear, currentDisplayedGregorianMonth);
+        });
+    }
+    if (nextHijriMonthButton) {
+        nextHijriMonthButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentDisplayedGregorianMonth++;
+            if (currentDisplayedGregorianMonth > 12) {
+                currentDisplayedGregorianMonth = 1;
+                currentDisplayedGregorianYear++;
+            }
+            fetchAndRenderHijriCalendar(currentDisplayedGregorianYear, currentDisplayedGregorianMonth);
+        });
+    }
+    updateGregorianDateToday();
+
+    // On modal open, initialize to today's Gregorian month/year
+    return async function openCalendarToToday() {
+        const today = new Date();
+        currentDisplayedGregorianYear = today.getFullYear();
+        currentDisplayedGregorianMonth = today.getMonth() + 1;
+        fetchAndRenderHijriCalendar(currentDisplayedGregorianYear, currentDisplayedGregorianMonth);
+    }
+}
+
+let openHijriCalendarModalToToday = null;
+document.addEventListener('DOMContentLoaded', function () {
+    // ...existing code...
+    if (document.getElementById('hijriCalendarModal')) {
+        openHijriCalendarModalToToday = setupHijriCalendarModal();
+        const showHijriBtn = document.getElementById('showHijriCalendarBtn');
+        if (showHijriBtn) {
+            showHijriBtn.addEventListener('click', function() {
+                document.getElementById('hijriCalendarModal').classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+                if (openHijriCalendarModalToToday) openHijriCalendarModalToToday();
+            });
+        }
     }
 });
 </script>

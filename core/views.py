@@ -1,15 +1,10 @@
-# core/views.py
 import json
-import httpx # Changed from requests
-import asyncio # For async
+import httpx 
+import asyncio
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.conf import settings
 
-# It's highly recommended to use the official Google AI Client Library for Python
-# (google-cloud-aiplatform) for interacting with the Gemini API.
-# The library handles authentication and API calls efficiently.
-# from google.cloud import aiplatform # This would be used in a real implementation
 async def fetch_prayer_times_api(city, country, method):
     """
     Asynchronous helper function to fetch prayer times from Aladhan API,
@@ -65,32 +60,6 @@ async def translate_text_with_gemini_api(text_to_translate, target_language="id"
     In a real scenario, you'd use the official Google AI client library.
     If it were a direct HTTP API, you'd use httpx here.
     """
-    print(f"Attempting to translate (MOCK ASYNC): '{text_to_translate}' from {source_language} to {target_language}")
-    print(f"Using Project ID: {settings.GEMINI_PROJECT_ID}, Location: {settings.GEMINI_LOCATION}")
-
-    # --- THIS REMAINS A MOCK ---
-    # If Gemini had a simple REST endpoint you were calling directly (less likely for its full capabilities):
-    # gemini_api_endpoint = "YOUR_CONCEPTUAL_GEMINI_HTTP_ENDPOINT_FOR_TRANSLATION"
-    # payload = {
-    #     "text": text_to_translate,
-    #     "target_language": target_language,
-    #     "source_language": source_language,
-    #     # ... other parameters, authentication headers etc.
-    # }
-    # headers = {"Authorization": f"Bearer {settings.GEMINI_API_KEY}"} # Assuming an API key
-    # try:
-    #     async with httpx.AsyncClient() as client:
-    #         response = await client.post(gemini_api_endpoint, json=payload, headers=headers)
-    #         response.raise_for_status()
-    #         # Parse the actual translated text from response.json()
-    #         # return parsed_translated_text 
-    # except httpx.HTTPStatusError as e:
-    #     print(f"HTTP error calling conceptual Gemini endpoint: {e.response.status_code}")
-    #     return f"[Translation Error: HTTP {e.response.status_code}]"
-    # except Exception as e:
-    #     print(f"Error in conceptual Gemini HTTP call: {e}")
-    #     return "[Translation Service Unavailable]"
-    # --- END CONCEPTUAL HTTP MOCK ---
 
     # Simulating an async operation for the mock
     await asyncio.sleep(0.1) # Simulate network delay
@@ -129,12 +98,11 @@ async def home_view(request):
             context['hijri_date_details'] = {
                 'day': hijri_info.get('day'),
                 'month_ar': hijri_info.get('month', {}).get('ar'),
-                'month_en': hijri_info.get('month', {}).get('en'), # Or 'id' if API provides it
+                'month_en': hijri_info.get('month', {}).get('en'),
                 'year': hijri_info.get('year'),
-                'designation': hijri_info.get('designation', {}).get('abbreviated'), # e.g., "AH"
-                'holidays': hijri_info.get('holidays', []) # List of holidays for the day
+                'designation': hijri_info.get('designation', {}).get('abbreviated'),
+                'holidays': hijri_info.get('holidays', [])
             }
-            # For simpler display string:
             context['prayer_hijri_date_readable'] = f"{hijri_info.get('day')} {hijri_info.get('month', {}).get('en')} {hijri_info.get('year')} {hijri_info.get('designation', {}).get('abbreviated')}"
         else:
             context['hijri_date_details'] = None

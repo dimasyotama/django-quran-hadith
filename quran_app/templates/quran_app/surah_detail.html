@@ -226,19 +226,19 @@ details > summary::marker { display: none; }
 
         <div class="mt-10 pt-6 border-t dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
             {% if surah.surat_sebelumnya and surah.surat_sebelumnya.nomor %}
-            <a href="{% url 'surah_detail' surah.surat_sebelumnya.nomor %}" class="w-full sm:w-auto group inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm hover:shadow-md transition-all">
+            <a href="{% url 'quran_app:surah_detail' surah.surat_sebelumnya.nomor %}" class="w-full sm:w-auto group inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm hover:shadow-md transition-all">
                 <svg class="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0 transform group-hover:-translate-x-1 transition-transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
                 {{ surah.surat_sebelumnya.namaLatin }}
             </a>
             {% else %} <span class="w-full sm:w-auto h-10"></span> 
             {% endif %}
 
-            <a href="{% url 'quran_home' %}" class="w-full sm:w-auto order-first sm:order-none inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-green-700 dark:text-green-300 bg-green-100 hover:bg-green-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-offset-gray-900 transition-colors">
+            <a href="{% url 'quran_app:quran_home' %}" class="w-full sm:w-auto order-first sm:order-none inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-green-700 dark:text-green-300 bg-green-100 hover:bg-green-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-offset-gray-900 transition-colors">
                 Daftar Surat
             </a>
 
             {% if surah.surat_selanjutnya and surah.surat_selanjutnya.nomor %}
-            <a href="{% url 'surah_detail' surah.surat_selanjutnya.nomor %}" class="w-full sm:w-auto group inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm hover:shadow-md transition-all">
+            <a href="{% url 'quran_app:surah_detail' surah.surat_selanjutnya.nomor %}" class="w-full sm:w-auto group inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm hover:shadow-md transition-all">
                 {{ surah.surat_selanjutnya.namaLatin }}
                 <svg class="w-4 h-4 ml-2 rtl:mr-2 rtl:ml-0 transform group-hover:translate-x-1 transition-transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
             </a>
