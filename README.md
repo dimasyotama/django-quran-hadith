@@ -10,6 +10,26 @@ A modern web application for exploring the Quran and Hadith collections, featuri
 - **Modern UI**: Responsive design with Tailwind CSS and dark mode support.
 - **Async Django Views**: Uses Django 4+ async views and httpx for fast API calls.
 
+## Screenshots
+
+### Home Page
+![Home Page](Screenshot%202025-06-04%20at%2008.24.08.png)
+
+### Prayer Times
+![Prayer Times](Screenshot%202025-06-04%20at%2008.24.16.png)
+
+### Quran Explorer
+![Quran Explorer](Screenshot%202025-06-04%20at%2008.24.22.png)
+
+### Hadith Browser
+![Hadith Browser](Screenshot%202025-06-04%20at%2008.24.28.png)
+
+### Dark Mode
+![Dark Mode](Screenshot%202025-06-04%20at%2008.24.46.png)
+
+### Mobile View
+![Mobile View](Screenshot%202025-06-04%20at%2008.24.51.png)
+
 ## Tech Stack
 - **Backend**: Python 3.10+, Django 5.x, async views
 - **Frontend**: Tailwind CSS 3.x, PostCSS, @tailwindcss/forms
