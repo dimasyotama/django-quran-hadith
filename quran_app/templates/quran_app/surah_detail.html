@@ -185,23 +185,6 @@ details > summary::marker { display: none; }
                                 {% if ayah_item.audio_ayah_default %}<source src="{{ ayah_item.audio_ayah_default }}" type="audio/mpeg">
                                 {% elif ayah_item.audio_options_formatted %}{% for key, data_qari in ayah_item.audio_options_formatted.items %}{% if forloop.first %}<source src="{{ data_qari.url }}" type="audio/mpeg">{% endif %}{% endfor %}{% endif %}
                             </audio>
-                             {% if ayah_item.audio_options_formatted|length > 0 %}
-                             <div class="mt-1">
-                                <label for="ayahAudioSelector-{{surah.nomor}}-{{ayah_item.nomor_ayat}}" class="sr-only">Pilih Qari Ayah</label>
-                                <select id="ayahAudioSelector-{{surah.nomor}}-{{ayah_item.nomor_ayat}}" 
-                                        onchange="let p = document.getElementById('ayahAudioPlayer{{surah.nomor}}-{{ayah_item.nomor_ayat}}'); p.src = this.value; p.load();"
-                                        class="custom-select text-sm p-2.5 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:focus:border-green-400 w-full max-w-xs">
-                                    {% for key, data_qari in ayah_item.audio_options_formatted.items %}
-                                        <option value="{{ data_qari.url }}" 
-                                                {% comment %} FIXED THE IF CONDITION HERE - REMOVED PARENTHESES {% endcomment %}
-                                                {% if ayah_item.audio_ayah_default == data_qari.url or not ayah_item.audio_ayah_default and key == "05" %}selected{% endif %} 
-                                                class="text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-700">
-                                            {{ data_qari.name }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                             {% endif %} {# Closes if ayah_item.audio_options_formatted|length > 0 #}
                         </div>
                         {% endif %} {# Closes if ayah_item.audio_ayah_default or ayah_item.audio_options_formatted #}
 
